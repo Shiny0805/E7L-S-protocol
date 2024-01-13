@@ -1,18 +1,19 @@
 [package]
-name = "e7l-s-protocol-program"
+name = "e7l-s-protocol"
 version = "0.1.0"
+description = "Created with Anchor"
 edition = "2021"
-readme = "./README.md"
-license-file = "../../LICENSE"
-publish = false
 
 [lib]
 crate-type = ["cdylib", "lib"]
+name = "e7l_s_protocol"
+
+[features]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+cpi = ["no-entrypoint"]
+default = []
 
 [dependencies]
-borsh = "^0.10"
-shank = "0.3.0"
-num-derive = "^0.3"
-num-traits = "^0.2"
-solana-program = "~1.16"
-thiserror = "^1.0"
+anchor-lang = "0.29.0"

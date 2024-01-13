@@ -1,9 +1,15 @@
-pub mod entrypoint;
-pub mod error;
-pub mod instruction;
-pub mod processor;
-pub mod state;
+use anchor_lang::prelude::*;
 
-pub use solana_program;
+declare_id!("632M5HzWKtu4CgihaQmUNjEBxo1x6THsHfuuGXGNDWEw");
 
-solana_program::declare_id!("MyProgram1111111111111111111111111111111111");
+#[program]
+pub mod e7l_s_protocol {
+    use super::*;
+
+    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
+        Ok(())
+    }
+}
+
+#[derive(Accounts)]
+pub struct Initialize {}
