@@ -1,18 +1,16 @@
-[toolchain]
-
 [features]
 seeds = false
 skip-lint = false
 
-[programs.localnet]
-e7l_s_protocol = "632M5HzWKtu4CgihaQmUNjEBxo1x6THsHfuuGXGNDWEw"
+[programs.devnet]
+e7l_s_protocol = "FisiUgsgCrjcwzDDrdoqTpjVizLNiEij73hrTgfUSwvi"
 
 [registry]
-url = "https://api.apr.dev"
+url = "https://anchor.projectserum.com"
 
 [provider]
 cluster = "devnet"
-wallet = "/root/.config/solana/id.json"
+wallet = "./keys/E1.json"
 
 [scripts]
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
