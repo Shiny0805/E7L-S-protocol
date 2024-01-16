@@ -1,14 +1,13 @@
 use anchor_lang::{prelude::*, AnchorDeserialize};
-
 pub mod constant;
+pub mod error;
 pub mod instructions;
 pub mod state;
-pub mod error;
 pub mod util;
 use constant::*;
+use error::*;
 use instructions::*;
 use state::*;
-use error::*;
 use util::*;
 
 declare_id!("FisiUgsgCrjcwzDDrdoqTpjVizLNiEij73hrTgfUSwvi");
@@ -25,18 +24,20 @@ pub mod e7l_s_protocol {
     }
 
     //  Initialize main NFT pool
-    pub fn init_main(mut ctx: Context<InitMain>) -> Result<()> {
-        InitMain::process_instruction(&mut ctx)
+    pub fn init_main(mut ctx: Context<InitMain>, max_limited: bool, unlinkable: bool) -> Result<()> {
+        InitMain::process_instruction(&mut ctx, max_limited, unlinkable)
     }
 
     pub fn link_nft(ctx: Context<LinkNft>) -> Result<()> {
         link_nft::link_nft_handler(ctx)
     }
 
-}
+    pub fn unlink_nft(ctx: Context<UnlinkNft>) -> Result<()> {
+        unlink_nft::unlink_nft_handler(ctx)
+    }
 
-// fn user(pool_loader: &AccountLoader<NftPool>, user: &AccountInfo) -> Result<()> {
-//     let nft_pool = pool_loader.load()?;
-//     require!(nft_pool.owner == *user.key, E7LError::InvalidNftPool);
-//     Ok(())
-// }
+    pub fn sync_nft(ctx: Context<SyncNft>) -> Result<()> {
+        sync_nft::sync_nft_handler(ctx)
+    }
+
+}

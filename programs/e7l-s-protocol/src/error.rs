@@ -6,6 +6,8 @@ pub enum E7LError {
     InvalidOwner,
     #[msg("Invalid admin key.")]
     InvalidAdmin,
+    #[msg("This is unlinkable NFT.")]
+    UnlinkableNFT,
     #[msg("Faild to link NFT.")]
     InvalidLinkNFT,
     #[msg("Invalid Main Nft Pool")]
@@ -14,4 +16,6 @@ pub enum E7LError {
     InvalidMetadata,
     #[msg("Linked maximum number of NFTs")]
     MaxLinkCount,
+    #[msg("Can not find NFT")]
+    NftNotExist,
 }

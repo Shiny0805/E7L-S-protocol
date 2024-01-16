@@ -33,3 +33,4 @@ pub fn resize_account<'info>(
     account_info.realloc(new_space, false)?;
     Ok(())
 }
+

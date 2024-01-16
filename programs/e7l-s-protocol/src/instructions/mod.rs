@@ -4,3 +4,7 @@ pub mod init_main;
 pub use init_main::*;
 pub mod link_nft;
 pub use link_nft::*;
+pub mod unlink_nft;
+pub use unlink_nft::*;
+pub mod sync_nft;
+pub use sync_nft::*;

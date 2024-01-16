@@ -40,7 +40,7 @@ export type E7lSProtocol = {
           "isSigner": true
         },
         {
-          "name": "tokenAccount",
+          "name": "tokenMint",
           "isMut": false,
           "isSigner": false
         },
@@ -60,7 +60,16 @@ export type E7lSProtocol = {
           "isSigner": false
         }
       ],
-      "args": []
+      "args": [
+        {
+          "name": "maxLimited",
+          "type": "bool"
+        },
+        {
+          "name": "unlinkable",
+          "type": "bool"
+        }
+      ]
     },
     {
       "name": "linkNft",
@@ -81,19 +90,140 @@ export type E7lSProtocol = {
           "isSigner": false
         },
         {
-          "name": "userNftTokenAccount",
+          "name": "tokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "nftMint",
+          "name": "tokenMint",
           "isMut": false,
           "isSigner": false
+        },
+        {
+          "name": "tokenMintEdition",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK instruction will fail if wrong edition is supplied"
+          ]
         },
         {
           "name": "mintMetadata",
           "isMut": true,
           "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMetadataProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "unlinkNft",
+      "accounts": [
+        {
+          "name": "owner",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "globalAuthority",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "nftAuthority",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMintEdition",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK instruction will fail if wrong edition is supplied"
+          ]
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMetadataProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "syncNft",
+      "accounts": [
+        {
+          "name": "owner",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "globalAuthority",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "nftAuthority",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "destTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMintEdition",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK instruction will fail if wrong edition is supplied"
+          ]
         },
         {
           "name": "tokenProgram",
@@ -133,11 +263,7 @@ export type E7lSProtocol = {
         "kind": "struct",
         "fields": [
           {
-            "name": "owner",
-            "type": "publicKey"
-          },
-          {
-            "name": "tokenAccount",
+            "name": "tokenMint",
             "type": "publicKey"
           },
           {
@@ -171,7 +297,7 @@ export type E7lSProtocol = {
         "kind": "struct",
         "fields": [
           {
-            "name": "nftAddr",
+            "name": "mint",
             "type": "publicKey"
           },
           {
@@ -195,23 +321,33 @@ export type E7lSProtocol = {
     },
     {
       "code": 6002,
+      "name": "UnlinkableNFT",
+      "msg": "This is unlinkable NFT."
+    },
+    {
+      "code": 6003,
       "name": "InvalidLinkNFT",
       "msg": "Faild to link NFT."
     },
     {
-      "code": 6003,
+      "code": 6004,
       "name": "InvalidNftPool",
       "msg": "Invalid Main Nft Pool"
     },
     {
-      "code": 6004,
+      "code": 6005,
       "name": "InvalidMetadata",
       "msg": "Invalid Metadata Address"
     },
     {
-      "code": 6005,
+      "code": 6006,
       "name": "MaxLinkCount",
       "msg": "Linked maximum number of NFTs"
+    },
+    {
+      "code": 6007,
+      "name": "NftNotExist",
+      "msg": "Can not find NFT"
     }
   ]
 };
@@ -258,7 +394,7 @@ export const IDL: E7lSProtocol = {
           "isSigner": true
         },
         {
-          "name": "tokenAccount",
+          "name": "tokenMint",
           "isMut": false,
           "isSigner": false
         },
@@ -278,7 +414,16 @@ export const IDL: E7lSProtocol = {
           "isSigner": false
         }
       ],
-      "args": []
+      "args": [
+        {
+          "name": "maxLimited",
+          "type": "bool"
+        },
+        {
+          "name": "unlinkable",
+          "type": "bool"
+        }
+      ]
     },
     {
       "name": "linkNft",
@@ -299,19 +444,140 @@ export const IDL: E7lSProtocol = {
           "isSigner": false
         },
         {
-          "name": "userNftTokenAccount",
+          "name": "tokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "nftMint",
+          "name": "tokenMint",
           "isMut": false,
           "isSigner": false
+        },
+        {
+          "name": "tokenMintEdition",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK instruction will fail if wrong edition is supplied"
+          ]
         },
         {
           "name": "mintMetadata",
           "isMut": true,
           "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMetadataProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "unlinkNft",
+      "accounts": [
+        {
+          "name": "owner",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "globalAuthority",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "nftAuthority",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMintEdition",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK instruction will fail if wrong edition is supplied"
+          ]
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMetadataProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "syncNft",
+      "accounts": [
+        {
+          "name": "owner",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "globalAuthority",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "nftAuthority",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "destTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMintEdition",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK instruction will fail if wrong edition is supplied"
+          ]
         },
         {
           "name": "tokenProgram",
@@ -351,11 +617,7 @@ export const IDL: E7lSProtocol = {
         "kind": "struct",
         "fields": [
           {
-            "name": "owner",
-            "type": "publicKey"
-          },
-          {
-            "name": "tokenAccount",
+            "name": "tokenMint",
             "type": "publicKey"
           },
           {
@@ -389,7 +651,7 @@ export const IDL: E7lSProtocol = {
         "kind": "struct",
         "fields": [
           {
-            "name": "nftAddr",
+            "name": "mint",
             "type": "publicKey"
           },
           {
@@ -413,23 +675,33 @@ export const IDL: E7lSProtocol = {
     },
     {
       "code": 6002,
+      "name": "UnlinkableNFT",
+      "msg": "This is unlinkable NFT."
+    },
+    {
+      "code": 6003,
       "name": "InvalidLinkNFT",
       "msg": "Faild to link NFT."
     },
     {
-      "code": 6003,
+      "code": 6004,
       "name": "InvalidNftPool",
       "msg": "Invalid Main Nft Pool"
     },
     {
-      "code": 6004,
+      "code": 6005,
       "name": "InvalidMetadata",
       "msg": "Invalid Metadata Address"
     },
     {
-      "code": 6005,
+      "code": 6006,
       "name": "MaxLinkCount",
       "msg": "Linked maximum number of NFTs"
+    },
+    {
+      "code": 6007,
+      "name": "NftNotExist",
+      "msg": "Can not find NFT"
     }
   ]
 };

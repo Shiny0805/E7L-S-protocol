@@ -1,12 +1,12 @@
 use crate::*;
-use anchor_spl::token::{ TokenAccount };
+use anchor_spl::token::{ Mint };
 
 #[derive(Accounts)]
 pub struct InitMain<'info> {
     #[account(mut)]
     pub user: Signer<'info>,
 
-    pub token_account: Box<Account<'info, TokenAccount>>,
+    pub token_mint: Box<Account<'info, Mint>>,
 
     //  Nft pool stores main NFT's link info
     #[account(
@@ -24,11 +24,12 @@ pub struct InitMain<'info> {
 }
 
 impl InitMain<'_> {
-    pub fn process_instruction(ctx: &mut Context<Self>) -> Result<()> {
-        let nft_pool = &mut ctx.accounts.nft_pool;
+    pub fn process_instruction(ctx: &mut Context<Self>, max_limited: bool, unlinkable: bool) -> Result<()> {
+        let nft_pool: &mut Account<'_, NftPool> = &mut ctx.accounts.nft_pool;
 
-        nft_pool.owner = ctx.accounts.user.key();
-        nft_pool.token_account = ctx.accounts.token_account.key();
+        nft_pool.token_mint = ctx.accounts.token_mint.key();
+        nft_pool.max_limited = max_limited;
+        nft_pool.unlinkable = unlinkable;
 
         Ok(())
     }

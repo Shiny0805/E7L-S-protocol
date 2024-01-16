@@ -11,8 +11,7 @@ impl GlobalPool {
 
 #[account]
 pub struct NftPool {
-    pub owner: Pubkey,                           // 32
-    pub token_account: Pubkey,                   // 32
+    pub token_mint: Pubkey,                      // 32
     pub item_count: u64,                         // 8
     pub max_limited: bool,                       // 4
     pub unlinkable: bool,                        // 4
@@ -20,24 +19,37 @@ pub struct NftPool {
 }
 
 impl NftPool {
-    pub const DATA_SIZE: usize = 80 + 4;
+    pub const DATA_SIZE: usize = 48 + 4;
 
     //  Add new NFT to vector
-    pub fn add_nft(&mut self, nft_addr: Pubkey) -> Result<()> {
+    pub fn add_nft(&mut self, mint: Pubkey) -> Result<()> {
         //  Add link info
         self.items.push(LinkedNFT {
-            nft_addr,
+            mint,
             linked_time: Clock::get()?.unix_timestamp,
         });
 
         Ok(())
     }
+
+    pub fn remove_nft(&mut self, mint: Pubkey) -> Result<bool> {
+        let mut removed = false;
+        for (index, item) in self.items.iter().enumerate() {
+            if item.mint == mint {
+                removed = true;
+                self.items.swap_remove(index);
+                break;
+            }
+        }
+        Ok(removed)
+    }
+
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Default, Clone)]
 pub struct LinkedNFT {
-    pub nft_addr: Pubkey,
-    pub linked_time: i64,
+    pub mint: Pubkey,       // 32
+    pub linked_time: i64,   // 8
 }
 
 impl LinkedNFT {
