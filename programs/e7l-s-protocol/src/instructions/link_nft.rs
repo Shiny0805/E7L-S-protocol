@@ -1,5 +1,5 @@
 use crate::*;
-use anchor_spl::token::{self, Approve, Token, TokenAccount};
+use anchor_spl::token::{self, Approve, Mint, Token, TokenAccount};
 use mpl_token_metadata::instruction::freeze_delegated_account;
 use solana_program::program::invoke_signed;
 
@@ -17,7 +17,7 @@ pub struct LinkNft<'info> {
 
     #[account(
         mut,
-        seeds = [token_mint.key().as_ref(), NFT_AUTHORITY_SEED.as_ref()],
+        seeds = [main_mint.key().as_ref(), NFT_AUTHORITY_SEED.as_ref()],
         bump,
     )]
     pub nft_authority: Box<Account<'info, NftPool>>,
@@ -28,29 +28,37 @@ pub struct LinkNft<'info> {
         constraint = token_account.owner == *owner.key,
         constraint = token_account.amount == 1,
     )]
-    pub token_account: Account<'info, TokenAccount>,
+    pub token_account: Box<Account<'info, TokenAccount>>,
 
     /// CHECK: this account is safe
-    pub token_mint: AccountInfo<'info>,
+    pub main_mint: Box<Account<'info, Mint>>,
+
+    /// CHECK: this account is safe
+    pub token_mint: Box<Account<'info, Mint>>,
 
     /// CHECK instruction will fail if wrong edition is supplied
     pub token_mint_edition: AccountInfo<'info>,
+
+    /// CHECK: this account is safe
     #[account(
         mut,
         constraint = mint_metadata.owner == &mpl_token_metadata::ID
     )]
-    /// CHECK: this account is safe
     pub mint_metadata: AccountInfo<'info>,
+
+    /// CHECK: this account is safe
     pub token_program: Program<'info, Token>,
 
-    #[account(constraint = token_metadata_program.key == &mpl_token_metadata::ID)]
     /// CHECK: this account is safe
+    #[account(constraint = token_metadata_program.key == &mpl_token_metadata::ID)]
     pub token_metadata_program: AccountInfo<'info>,
     pub system_program: Program<'info, System>,
 }
 
 pub fn link_nft_handler(ctx: Context<LinkNft>) -> Result<()> {
     let nft_pool = &mut ctx.accounts.nft_authority;
+
+    require!(ctx.accounts.main_mint.key() != ctx.accounts.token_mint.key(), E7LError::InvalidMainNFT);
 
     if nft_pool.max_limited {
         require!(
@@ -72,11 +80,6 @@ pub fn link_nft_handler(ctx: Context<LinkNft>) -> Result<()> {
     );
     require!(metadata == mint_metadata.key(), E7LError::InvalidMetadata);
 
-    // Add data on Nftpool
-    let _add_nft = nft_pool.add_nft(ctx.accounts.token_mint.key());
-
-    require!(_add_nft == Ok(()), E7LError::InvalidLinkNFT);
-
     // Delegate the NFT account to the PDA
     let cpi_accounts = Approve {
         to: ctx.accounts.token_account.to_account_info(),
@@ -88,21 +91,21 @@ pub fn link_nft_handler(ctx: Context<LinkNft>) -> Result<()> {
     token::approve(cpi_context, 1)?;
 
     // Freeze delegated account
-    let nft_account = ctx.accounts.token_mint.key();
+    let nft_account = ctx.accounts.main_mint.key();
 
     let seeds = &[
         nft_account.as_ref(),
         NFT_AUTHORITY_SEED.as_bytes(),
-        &[*ctx.bumps.get("nft_pool").unwrap()],
+        &[*ctx.bumps.get("nft_authority").unwrap()],
     ];
 
     invoke_signed(
         &freeze_delegated_account(
-            ctx.accounts.token_program.key(),
+            ctx.accounts.token_metadata_program.key(),
             nft_pool.key(),
             ctx.accounts.token_account.key(),
-            ctx.accounts.token_mint_edition.key(), 
-            ctx.accounts.token_mint.key(), 
+            ctx.accounts.token_mint_edition.key(),
+            ctx.accounts.token_mint.key(),
         ),
         &[
             nft_pool.to_account_info().clone(),
@@ -110,7 +113,7 @@ pub fn link_nft_handler(ctx: Context<LinkNft>) -> Result<()> {
             ctx.accounts.token_mint_edition.to_account_info(),
             ctx.accounts.token_mint.to_account_info(),
         ],
-        &[seeds],
+        &[&seeds[..]],
     )?;
 
     //  ----------------------------    resize nftpool   -----------------------------------------
@@ -125,6 +128,11 @@ pub fn link_nft_handler(ctx: Context<LinkNft>) -> Result<()> {
     )?;
 
     nft_pool.item_count += 1;
+
+    // Add data on Nftpool
+    let _add_nft = nft_pool.add_nft(ctx.accounts.token_mint.key());
+
+    require!(_add_nft == Ok(()), E7LError::InvalidLinkNFT);
 
     Ok(())
 }

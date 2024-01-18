@@ -6,6 +6,8 @@ pub enum E7LError {
     InvalidOwner,
     #[msg("Invalid admin key.")]
     InvalidAdmin,
+    #[msg("Can't Link main NFT.")]
+    InvalidMainNFT,
     #[msg("This is unlinkable NFT.")]
     UnlinkableNFT,
     #[msg("Faild to link NFT.")]
