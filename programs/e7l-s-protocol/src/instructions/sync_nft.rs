@@ -67,6 +67,8 @@ pub struct SyncNft<'info> {
 pub fn sync_nft_handler(ctx: Context<SyncNft>) -> Result<()> {
     let nft_pool = &mut ctx.accounts.nft_authority;
 
+    require!(!nft_pool.unlinkable, E7LError::UnlinkableNFT);
+
     // Thaw delegated Account
     let nft_account = ctx.accounts.main_mint.key();
 

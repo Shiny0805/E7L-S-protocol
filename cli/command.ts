@@ -94,8 +94,8 @@ function programCommand(name: string) {
     return program
         .command(name)
         .option('-e, --env <string>', 'Solana cluster env name', 'devnet') //mainnet-beta, testnet, devnet
-        .option('-r, --rpc <string>', 'Solana cluster RPC name', 'https://api.devnet.solana.com')
-        .option('-k, --keypair <string>', 'Solana wallet Keypair Path', './keys/E2.json')
+        .option('-r, --rpc <string>', 'Solana cluster RPC name', 'https://solana-devnet.g.alchemy.com/v2/TfbtD6EL_PnoozBG4Jti517RS0Fivanm')
+        .option('-k, --keypair <string>', 'Solana wallet Keypair Path', './keys/E1.json')
 }
 
 program.parse(process.argv);

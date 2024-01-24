@@ -1,0 +1,2 @@
+Error: Function _ZN14regex_automata3dfa5regex7Builder12build_sparse17hda75130f9624387dE Stack offset of 4544 exceeded max offset of 4096 by 448 bytes, please minimize large stack variables
+Error: Function _ZN14regex_automata4meta8strategy3new17h4efd3c878494e9c9E Stack offset of 13752 exceeded max offset of 4096 by 9656 bytes, please minimize large stack variables

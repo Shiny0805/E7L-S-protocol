@@ -189,7 +189,7 @@ export const createSyncNftTx = async (
 
     const { instructions, destinationAccounts } = await getATokenAccountsNeedCreate(
         solConnection, 
-        newAddress, 
+        userAddress, 
         userAddress, 
         [nftMint]
     );

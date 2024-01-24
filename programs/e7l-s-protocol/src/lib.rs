@@ -40,4 +40,16 @@ pub mod e7l_s_protocol {
         sync_nft::sync_nft_handler(ctx)
     }
 
+    pub fn link_pnft(ctx: Context<LinkPNft>) -> Result<()> {
+        link_pnft::link_pnft_handler(ctx)
+    }
+
+    pub fn unlink_pnft(ctx: Context<UnlinkPNft>) -> Result<()> {
+        unlink_pnft::unlink_pnft_handler(ctx)
+    }
+
+    pub fn sync_pnft(ctx: Context<SyncPNft>) -> Result<()> {
+        sync_pnft::sync_pnft_handler(ctx)
+    }
+
 }
