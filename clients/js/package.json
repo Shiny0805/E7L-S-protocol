@@ -1,5 +1,5 @@
 {
-  "name": "@metaplex-foundation/e7l-s-protocol",
+  "name": "@builderz/e7l-s-protocol",
   "version": "0.1.0",
   "description": "The solution where other NFTs can be linked and unlinked again from it on Solana Blockchain",
   "main": "dist/src/index.js",
