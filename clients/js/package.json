@@ -59,6 +59,5 @@
         "test/": "dist/test/"
       }
     }
-  },
-  "packageManager": "pnpm@8.2.0"
+  }
 }

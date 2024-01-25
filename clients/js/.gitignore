@@ -1,2 +1,4 @@
 .vercel
 docs
+pnpm-lock.yaml
+yarn.lock
