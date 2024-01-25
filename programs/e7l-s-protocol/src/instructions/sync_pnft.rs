@@ -17,6 +17,9 @@ pub struct SyncPNft<'info> {
     #[account(mut)]
     pub owner: Signer<'info>,
 
+    /// CHECK instruction will fail if wrong metadata is supplied
+    pub old_owner: AccountInfo<'info>,
+
     #[account(
         mut,
         seeds = [GLOBAL_AUTHORITY_SEED.as_ref()],
@@ -103,14 +106,14 @@ pub fn sync_pnft_handler(ctx: Context<SyncPNft>) -> Result<()> {
 
     //  ----------------------------     unlock     -------------------------------
 
-    invoke_signed(
+   invoke_signed(
         &Instruction {
             program_id: mpl_token_metadata::id(),
             accounts: vec![
                 // 0. `[signer]` Delegate
                 AccountMeta::new_readonly(nft_pool.key(), true),
                 // 1. `[optional]` Token owner
-                AccountMeta::new_readonly(ctx.accounts.owner.key(), false),
+                AccountMeta::new_readonly(ctx.accounts.old_owner.key(), false),
                 // 2. `[mut]` Token account
                 AccountMeta::new(ctx.accounts.token_account.key(), false),
                 // 3. `[]` Mint account
@@ -142,6 +145,7 @@ pub fn sync_pnft_handler(ctx: Context<SyncPNft>) -> Result<()> {
         },
         &[
             nft_pool.to_account_info(),
+            ctx.accounts.old_owner.to_account_info(),
             ctx.accounts.owner.to_account_info(),
             ctx.accounts.token_account.to_account_info(),
             ctx.accounts.token_mint.to_account_info(),
@@ -157,6 +161,17 @@ pub fn sync_pnft_handler(ctx: Context<SyncPNft>) -> Result<()> {
         delegate_seeds,
     )?;
 
+    // msg!("old_owner: {:?}", ctx.accounts.old_owner.key());
+    // msg!("dest_token_account: {:?}", ctx.accounts.dest_token_account.key());
+    // msg!("owner: {:?}", ctx.accounts.owner.key());
+    // msg!("token_mint: {:?}", ctx.accounts.token_mint.key());
+    // msg!("mint_metadata: {:?}", ctx.accounts.mint_metadata.key());
+    // msg!("token_mint_edition: {:?}", ctx.accounts.token_mint_edition.key());
+    // msg!("token_mint_record: {:?}", ctx.accounts.token_mint_record.key());
+    // msg!("dest_token_mint_record: {:?}", ctx.accounts.dest_token_mint_record.key());
+    // msg!("nft_pool: {:?}", nft_pool.key());
+    // msg!("owner: {:?}", ctx.accounts.owner.key());
+
     //  --------------------------- transfer linked pNFT to new owner   ---------------------------------------
 
     invoke_signed(
@@ -166,23 +181,23 @@ pub fn sync_pnft_handler(ctx: Context<SyncPNft>) -> Result<()> {
                 //   0. `[writable]` Token account
                 AccountMeta::new(ctx.accounts.token_account.key(), false),
                 //   1. `[]` Token account owner
-                AccountMeta::new(nft_pool.key(), false),
+                AccountMeta::new_readonly(ctx.accounts.old_owner.key(), false),
                 //   2. `[writable]` Destination token account
                 AccountMeta::new(ctx.accounts.dest_token_account.key(), false),
                 //   3. `[]` Destination token account owner
-                AccountMeta::new(ctx.accounts.owner.key(), true),
+                AccountMeta::new(ctx.accounts.owner.key(), false),
                 //   4. `[]` Mint of token asset
                 AccountMeta::new_readonly(ctx.accounts.token_mint.key(), false),
                 //   5. `[writable]` Metadata account
                 AccountMeta::new(ctx.accounts.mint_metadata.key(), false),
                 //   6. `[optional]` Edition of token asset
                 AccountMeta::new_readonly(ctx.accounts.token_mint_edition.key(), false),
-                //   7. `[signer] Transfer authority (token or delegate owner)
-                AccountMeta::new_readonly(nft_pool.key(), false),
-                //   8. `[optional, writable]` Owner record PDA
+                //   7. `[optional, writable]` Owner record PDA
                 AccountMeta::new(ctx.accounts.token_mint_record.key(), false),
-                //   9. `[optional, writable]` Destination record PDA
+                //   8. `[optional, writable]` Destination record PDA
                 AccountMeta::new(ctx.accounts.dest_token_mint_record.key(), false),
+                //   9. `[signer] Transfer authority (token or delegate owner)
+                AccountMeta::new_readonly(nft_pool.key(), true),
                 //   10. `[signer, writable]` Payer
                 AccountMeta::new(ctx.accounts.owner.key(), true),
                 //   11. `[]` System Program
@@ -206,8 +221,9 @@ pub fn sync_pnft_handler(ctx: Context<SyncPNft>) -> Result<()> {
             .unwrap(),
         }),
         &[
+            nft_pool.to_account_info().clone(),
             ctx.accounts.token_account.to_account_info(),
-            nft_pool.to_account_info(),
+            ctx.accounts.old_owner.to_account_info(),
             ctx.accounts.dest_token_account.to_account_info(),
             ctx.accounts.owner.to_account_info(),
             ctx.accounts.token_mint.to_account_info(),
@@ -241,11 +257,11 @@ pub fn sync_pnft_handler(ctx: Context<SyncPNft>) -> Result<()> {
                 // 3. `[optional]` Master Edition account
                 AccountMeta::new_readonly(ctx.accounts.token_mint_edition.key(), false),
                 // 4. `[]` Token record
-                AccountMeta::new(ctx.accounts.token_mint_record.key(), false),
+                AccountMeta::new(ctx.accounts.dest_token_mint_record.key(), false),
                 // 5. `[]` Mint account
                 AccountMeta::new_readonly(ctx.accounts.token_mint.key(), false),
                 // 6. `[optional, writable]` Token account
-                AccountMeta::new(ctx.accounts.token_account.key(), false),
+                AccountMeta::new(ctx.accounts.dest_token_account.key(), false),
                 // 7. `[signer]` Approver (update authority or token owner) to approve the delegation
                 AccountMeta::new_readonly(ctx.accounts.owner.key(), true),
                 // 8. `[signer, writable]` Payer
@@ -261,8 +277,9 @@ pub fn sync_pnft_handler(ctx: Context<SyncPNft>) -> Result<()> {
                 // 13. `[optional]` Token Authorization Rules account
                 AccountMeta::new_readonly(ctx.accounts.auth_rules.key(), false),
             ],
-            data: MetadataInstruction::Delegate(DelegateArgs::StakingV1 {
+            data: MetadataInstruction::Delegate(DelegateArgs::LockedTransferV1 {
                 amount: 1,
+                locked_address: nft_pool.key(),
                 authorization_data: None,
             })
             .try_to_vec()
@@ -272,9 +289,9 @@ pub fn sync_pnft_handler(ctx: Context<SyncPNft>) -> Result<()> {
             nft_pool.to_account_info(),
             ctx.accounts.mint_metadata.to_account_info(),
             ctx.accounts.token_mint_edition.to_account_info(),
-            ctx.accounts.token_mint_record.to_account_info(),
+            ctx.accounts.dest_token_mint_record.to_account_info(),
             ctx.accounts.token_mint.to_account_info(),
-            ctx.accounts.token_account.to_account_info(),
+            ctx.accounts.dest_token_account.to_account_info(),
             ctx.accounts.owner.to_account_info(),
             ctx.accounts.system_program.to_account_info(),
             ctx.accounts.sysvar_instructions.to_account_info(),
@@ -293,7 +310,7 @@ pub fn sync_pnft_handler(ctx: Context<SyncPNft>) -> Result<()> {
                 // 1. `[optional]` Token owner
                 AccountMeta::new_readonly(ctx.accounts.owner.key(), false),
                 // 2. `[mut]` Token account
-                AccountMeta::new(ctx.accounts.token_account.key(), false),
+                AccountMeta::new(ctx.accounts.dest_token_account.key(), false),
                 // 3. `[]` Mint account
                 AccountMeta::new_readonly(ctx.accounts.token_mint.key(), false),
                 // 4. `[mut]` Metadata account
@@ -301,7 +318,7 @@ pub fn sync_pnft_handler(ctx: Context<SyncPNft>) -> Result<()> {
                 // 5. `[optional]` Edition account
                 AccountMeta::new_readonly(ctx.accounts.token_mint_edition.key(), false),
                 // 6. `[optional, mut]` Token record account
-                AccountMeta::new(ctx.accounts.token_mint_record.key(), false),
+                AccountMeta::new(ctx.accounts.dest_token_mint_record.key(), false),
                 // 7. `[signer, mut]` Payer
                 AccountMeta::new(ctx.accounts.owner.key(), true),
                 // 8. `[]` System Program
@@ -324,11 +341,11 @@ pub fn sync_pnft_handler(ctx: Context<SyncPNft>) -> Result<()> {
         &[
             nft_pool.to_account_info(),
             ctx.accounts.owner.to_account_info(),
-            ctx.accounts.token_account.to_account_info(),
+            ctx.accounts.dest_token_account.to_account_info(),
             ctx.accounts.token_mint.to_account_info(),
             ctx.accounts.mint_metadata.to_account_info(),
             ctx.accounts.token_mint_edition.to_account_info(),
-            ctx.accounts.token_mint_record.to_account_info(),
+            ctx.accounts.dest_token_mint_record.to_account_info(),
             ctx.accounts.system_program.to_account_info(),
             ctx.accounts.sysvar_instructions.to_account_info(),
             ctx.accounts.token_program.to_account_info(),

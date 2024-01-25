@@ -123,7 +123,7 @@ pub fn sync_nft_handler(ctx: Context<SyncNft>) -> Result<()> {
     let cpi_context = CpiContext::new(cpi_program, cpi_accounts);
     token::approve(cpi_context, 1)?;
 
-    // Delegate the NFT account to the PDA
+    // Freeze the NFT 
     invoke_signed(
         &freeze_delegated_account(
             ctx.accounts.token_metadata_program.key(),

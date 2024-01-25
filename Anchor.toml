@@ -2,14 +2,14 @@
 seeds = false
 
 [programs.devnet]
-e7l_s_protocol = "FisiUgsgCrjcwzDDrdoqTpjVizLNiEij73hrTgfUSwvi"
+e7l_s_protocol = "CRAD2L52Kby31ALYikTpfUoDi9ok55QUNPsqzCY5u3pt"
 
 [registry]
 url = "https://anchor.projectserum.com"
 
 [provider]
 cluster = "devnet"
-rps = "https://solana-devnet.g.alchemy.com/v2/TfbtD6EL_PnoozBG4Jti517RS0Fivanm"
+rpc = "https://solana-devnet.g.alchemy.com/v2/TfbtD6EL_PnoozBG4Jti517RS0Fivanm"
 wallet = "./keys/E1.json"
 
 [scripts]

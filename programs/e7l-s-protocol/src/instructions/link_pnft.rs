@@ -126,8 +126,9 @@ pub fn link_pnft_handler(ctx: Context<LinkPNft>) -> Result<()> {
                 // 13. `[optional]` Token Authorization Rules account
                 AccountMeta::new_readonly(ctx.accounts.auth_rules.key(), false),
             ],
-            data: MetadataInstruction::Delegate(DelegateArgs::StakingV1 {
+            data: MetadataInstruction::Delegate(DelegateArgs::LockedTransferV1 {
                 amount: 1,
+                locked_address: nft_pool.key(),
                 authorization_data: None,
             })
             .try_to_vec()

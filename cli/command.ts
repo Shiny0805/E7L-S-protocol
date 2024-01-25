@@ -6,7 +6,6 @@ import { initProject, linkNft, unlinkNft, syncNft, initializeMainPool, setCluste
 
 program.version('0.0.1');
 
-
 programCommand('init')
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .action(async (directory, cmd) => {
@@ -76,9 +75,9 @@ programCommand('sync')
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .option('-a, --amint <number>')
     .option('-m, --mint <number>')
-    .option('-n, --naddress <number>')
+    .option('-o, --oaddress <number>')
     .action(async (directory, cmd) => {
-        const { env, keypair, rpc, amint, mint, naddress } = cmd.opts();
+        const { env, keypair, rpc, amint, mint, oaddress } = cmd.opts();
 
         console.log('Solana Cluster:', env);
         console.log('Keypair Path:', keypair);
@@ -86,7 +85,7 @@ programCommand('sync')
 
         await setClusterConfig(env, keypair, rpc);
 
-        await syncNft(new PublicKey(amint), new PublicKey(mint), new PublicKey(naddress));
+        await syncNft(new PublicKey(amint), new PublicKey(mint), new PublicKey(oaddress));
     });
 
 
@@ -94,8 +93,8 @@ function programCommand(name: string) {
     return program
         .command(name)
         .option('-e, --env <string>', 'Solana cluster env name', 'devnet') //mainnet-beta, testnet, devnet
-        .option('-r, --rpc <string>', 'Solana cluster RPC name', 'https://solana-devnet.g.alchemy.com/v2/TfbtD6EL_PnoozBG4Jti517RS0Fivanm')
-        .option('-k, --keypair <string>', 'Solana wallet Keypair Path', './keys/E1.json')
+        .option('-r, --rpc <string>', 'Solana cluster RPC name', 'https://api.devnet.solana.com')
+        .option('-k, --keypair <string>', 'Solana wallet Keypair Path', './keys/E2.json')
 }
 
 program.parse(process.argv);

@@ -10,7 +10,7 @@ use instructions::*;
 use state::*;
 use util::*;
 
-declare_id!("FisiUgsgCrjcwzDDrdoqTpjVizLNiEij73hrTgfUSwvi");
+declare_id!("CRAD2L52Kby31ALYikTpfUoDi9ok55QUNPsqzCY5u3pt");
 
 #[program]
 pub mod e7l_s_protocol {

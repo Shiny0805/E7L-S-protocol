@@ -15,7 +15,7 @@
         "validator:debug": "amman start --config ./configs/validator.cjs",
         "validator:logs": "CI=1 amman logs",
         "validator:stop": "amman stop",
-        "script": "export ANCHOR_WALLET=./keys/E2.json && ts-node ./cli/command.ts"
+        "script": "export ANCHOR_WALLET=./keys/E1.json && ts-node ./cli/command.ts"
 
     },
     "dependencies": {

@@ -10,8 +10,12 @@ import {
     createInitMainTx,
     createLinkNftTx,
     createUnlinkNftTx,
-    createSyncNftTx
+    createSyncNftTx,
+    createLinkPNftTx,
+    createUnlinkPNftTx,
+    createSyncPNftTx
 } from '../lib/scripts';
+import { getTokenStandard } from '../lib/util';
 
 let solConnection: Connection = null;
 let program: Program = null;
@@ -101,7 +105,14 @@ export const linkNft = async (
     nftMint: PublicKey
 ) => {
     try {
-        const tx = await createLinkNftTx(payer.publicKey, mainNft, nftMint, program);
+        const tokenStandard = await getTokenStandard(nftMint, solConnection);
+
+        let tx: any;
+        if (tokenStandard === 4) {
+            tx = await createLinkPNftTx(payer.publicKey, mainNft, nftMint, program);
+        } else {
+            tx = await createLinkNftTx(payer.publicKey, mainNft, nftMint, program);
+        }
 
         const txId = await provider.sendAndConfirm(tx, [], {
             commitment: "confirmed",
@@ -121,7 +132,14 @@ export const unlinkNft = async (
     nftMint: PublicKey
 ) => {
     try {
-        const tx = await createUnlinkNftTx(payer.publicKey, mainNft, nftMint, program);
+        const tokenStandard = await getTokenStandard(nftMint, solConnection);
+        
+        let tx: any;
+        if (tokenStandard === 4) {
+            tx =await createUnlinkPNftTx(payer.publicKey, mainNft, nftMint, program);
+        } else {
+            tx = await createUnlinkNftTx(payer.publicKey, mainNft, nftMint, program);
+        }
 
         const txId = await provider.sendAndConfirm(tx, [], {
             commitment: "confirmed",
@@ -139,11 +157,17 @@ export const unlinkNft = async (
 export const syncNft = async (
     mainNft: PublicKey,
     nftMint: PublicKey,
-    newAddress: PublicKey
+    oldAddress: PublicKey
 ) => {
     try {
-        const tx = await createSyncNftTx(payer.publicKey, mainNft, nftMint, newAddress, program, solConnection);
-
+        const tokenStandard = await getTokenStandard(nftMint, solConnection);
+        let tx: any;
+        if (tokenStandard === 4) {
+            tx = await createSyncPNftTx(payer.publicKey, mainNft, nftMint, oldAddress, program, solConnection);
+        } else {
+            tx = await createSyncNftTx(payer.publicKey, mainNft, nftMint, oldAddress, program, solConnection);
+        }
+        
         const txId = await provider.sendAndConfirm(tx, [], {
             commitment: "confirmed",
         });

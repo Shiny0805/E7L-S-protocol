@@ -173,7 +173,7 @@ pub fn unlink_pnft_handler(ctx: Context<UnlinkPNft>) -> Result<()> {
                 // #[account(13, optional, name = "authorization_rules", desc = "Token Authorization Rules account")]
                 AccountMeta::new_readonly(ctx.accounts.auth_rules.key(), false),
             ],
-            data: MetadataInstruction::Revoke(RevokeArgs::StakingV1)
+            data: MetadataInstruction::Revoke(RevokeArgs::LockedTransferV1)
                 .try_to_vec()
                 .unwrap(),
         },

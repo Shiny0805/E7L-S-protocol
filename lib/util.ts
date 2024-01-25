@@ -1,14 +1,14 @@
 
 import * as anchor from "@project-serum/anchor";
 import { 
-    PublicKey, 
+    Connection,
+    PublicKey
 } from "@solana/web3.js";
 import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from "@solana/spl-token";
-
-// export const METAPLEX = new PublicKey('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s');
-// export const MPL_DEFAULT_RULE_SET = new PublicKey(
-//     "eBJLFYPxJmMGKuFwpDWkzxZeUrad92kZRC5BJLpzyT9"
-// );
+import {
+    Metadata,
+    PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID,
+} from "@metaplex-foundation/mpl-token-metadata";
 
 export const METAPLEX = new PublicKey('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s');
 export const MPL_DEFAULT_RULE_SET = new PublicKey(
@@ -125,6 +125,25 @@ const getMasterEdition = async (
     )[0];
 };
 
+const getTokenStandard = async (
+    mint: anchor.web3.PublicKey,
+    connection: Connection
+) => {
+
+    const [metadataPDA] = anchor.web3.PublicKey.findProgramAddressSync(
+        [
+            Buffer.from("metadata"),
+            TOKEN_METADATA_PROGRAM_ID.toBuffer(),
+            mint.toBuffer(),
+        ],
+        TOKEN_METADATA_PROGRAM_ID
+    );
+
+    const Metaplex_Metadata = await Metadata.fromAccountAddress(connection, metadataPDA);
+
+    return Metaplex_Metadata.tokenStandard;
+};
+
 export function findTokenRecordPda(
     mint: PublicKey,
     token: PublicKey
@@ -145,5 +164,6 @@ export {
     getAssociatedTokenAccount,
     getATokenAccountsNeedCreate,
     getMetadata,
-    getMasterEdition
+    getMasterEdition,
+    getTokenStandard
 }
