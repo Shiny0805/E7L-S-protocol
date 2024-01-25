@@ -161,17 +161,6 @@ pub fn sync_pnft_handler(ctx: Context<SyncPNft>) -> Result<()> {
         delegate_seeds,
     )?;
 
-    // msg!("old_owner: {:?}", ctx.accounts.old_owner.key());
-    // msg!("dest_token_account: {:?}", ctx.accounts.dest_token_account.key());
-    // msg!("owner: {:?}", ctx.accounts.owner.key());
-    // msg!("token_mint: {:?}", ctx.accounts.token_mint.key());
-    // msg!("mint_metadata: {:?}", ctx.accounts.mint_metadata.key());
-    // msg!("token_mint_edition: {:?}", ctx.accounts.token_mint_edition.key());
-    // msg!("token_mint_record: {:?}", ctx.accounts.token_mint_record.key());
-    // msg!("dest_token_mint_record: {:?}", ctx.accounts.dest_token_mint_record.key());
-    // msg!("nft_pool: {:?}", nft_pool.key());
-    // msg!("owner: {:?}", ctx.accounts.owner.key());
-
     //  --------------------------- transfer linked pNFT to new owner   ---------------------------------------
 
     invoke_signed(
