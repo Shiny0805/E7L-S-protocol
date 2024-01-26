@@ -6,9 +6,11 @@
  * @see https://github.com/metaplex-foundation/kinobi
  */
 
-export * from './accounts';
-export * from './errors';
-export * from './instructions';
-export * from './programs';
-export * from './shared';
-export * from './types';
+export * from './initialize';
+export * from './initMain';
+export * from './linkNft';
+export * from './linkPnft';
+export * from './syncNft';
+export * from './syncPnft';
+export * from './unlinkNft';
+export * from './unlinkPnft';

@@ -2,22 +2,23 @@ import { program } from 'commander';
 import {
     PublicKey
 } from '@solana/web3.js';
-import { initProject, linkNft, unlinkNft, syncNft, initializeMainPool, setClusterConfig } from './scripts';
+import { initProject, linkNft, unlinkNft, syncNft, initializeMainPool, setClusterConfig, createUmiWithConfigs } from './scripts';
 
 program.version('0.0.1');
 
 programCommand('init')
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    .option('-i, --identifier <number>')
     .action(async (directory, cmd) => {
-        const { env, keypair, rpc } = cmd.opts();
+        const { env, keypair, rpc, identifier } = cmd.opts();
 
         console.log('Solana Cluster:', env);
         console.log('Keypair Path:', keypair);
         console.log('RPC URL:', rpc);
 
-        await setClusterConfig(env, keypair, rpc);
+        const umi = createUmiWithConfigs(rpc, keypair)
 
-        await initProject();
+        await initProject(umi, identifier);
     });
 
 programCommand('init-main')

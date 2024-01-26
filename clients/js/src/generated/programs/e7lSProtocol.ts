@@ -18,7 +18,7 @@ import {
 } from '../errors';
 
 export const E7L_S_PROTOCOL_PROGRAM_ID =
-  'CRAD2L52Kby31ALYikTpfUoDi9ok55QUNPsqzCY5u3pt' as PublicKey<'CRAD2L52Kby31ALYikTpfUoDi9ok55QUNPsqzCY5u3pt'>;
+  'MyProgram1111111111111111111111111111111111' as PublicKey<'MyProgram1111111111111111111111111111111111'>;
 
 export function createE7lSProtocolProgram(): Program {
   return {

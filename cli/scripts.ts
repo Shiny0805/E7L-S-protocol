@@ -16,6 +16,10 @@ import {
     createSyncPNftTx
 } from '../lib/scripts';
 import { getTokenStandard } from '../lib/util';
+import { initializeAdmin } from '../clients/js/src';
+import { Umi, keypairIdentity } from '@metaplex-foundation/umi';
+import { bs58 } from '@project-serum/anchor/dist/cjs/utils/bytes';
+import { createUmi } from '@metaplex-foundation/umi-bundle-defaults';
 
 let solConnection: Connection = null;
 let program: Program = null;
@@ -63,18 +67,31 @@ export const setClusterConfig = async (
     console.log('ProgramId: ', program.programId.toBase58());
 }
 
+export const createUmiWithConfigs = (endpoint: string, keypair) => {
+    const umi = createUmi(endpoint);
+
+    const kp = umi.eddsa.createKeypairFromSecretKey(Uint8Array.from(require(keypair)));
+
+    umi.use(keypairIdentity(kp));
+
+    return umi;
+}
+
 /**
  * Initialize global pool, vault
  */
-export const initProject = async () => {
+export const initProject = async (umi: Umi, identifier: number) => {
     try {
-        const tx = await createInitializeTx(payer.publicKey, program);
+        const txBuilder = initializeAdmin(umi, identifier)
 
-        const txId = await provider.sendAndConfirm(tx, [], {
-            commitment: "confirmed",
-        });
+        const res = await txBuilder.sendAndConfirm(umi)
+        // const tx = await createInitializeTx(payer.publicKey, program);
 
-        console.log("txHash: ", txId);
+        // const txId = await provider.sendAndConfirm(tx, [], {
+        //     commitment: "confirmed",
+        // });
+
+        console.log("txHash: ", bs58.encode(res.signature));
     } catch (e) {
         console.log(e);
     }

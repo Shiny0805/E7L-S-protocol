@@ -19,7 +19,7 @@ kinobi.update(
 // TODO: Add size
 kinobi.update(
   new k.UpdateAccountsVisitor({
-    admin: {
+    globalPool: {
       seeds: [
         k.stringConstantSeed("global-authority"),
         k.publicKeySeed("authority_wallet", "The wallet address of the authority"),
