@@ -9,25 +9,36 @@ const idlDir = path.join(__dirname, "..", "idls");
 const kinobi = k.createFromIdls([path.join(idlDir, "e7l_s_protocol.json")]);
 
 // Update programs.
-// kinobi.update(
-//   new k.UpdateProgramsVisitor({
-//     e7lSProtocolProgram: { name: "e7lSProtocol" },
-//   })
-// );
+kinobi.update(
+  new k.UpdateProgramsVisitor({
+    e7lSProtocolProgram: { name: "e7lSProtocol" },
+  })
+);
 
-// // Update accounts.
-// kinobi.update(
-//   new k.UpdateAccountsVisitor({
-//     myPdaAccount: {
-//       seeds: [
-//         k.stringConstantSeed("myPdaAccount"),
-//         k.programSeed(),
-//         k.publicKeySeed("authority", "The address of the authority"),
-//         k.stringSeed("name", "The name of the account"),
-//       ],
-//     },
-//   })
-// );
+// Update accounts.
+// TODO: Add size
+kinobi.update(
+  new k.UpdateAccountsVisitor({
+    admin: {
+      seeds: [
+        k.stringConstantSeed("global-authority"),
+        k.publicKeySeed("authority_wallet", "The wallet address of the authority"),
+        k.variableSeed(
+            "identifier",
+            k.numberTypeNode("u64", "le"),
+            "The identifier number of the pool"
+          ),
+      ],
+    },
+    nftPool: {
+        seeds: [
+            k.stringConstantSeed("nft-pool"),
+            k.publicKeySeed("mint", "The Mint address of the NFT"),
+            k.publicKeySeed("config", "The Config address of the admin PDA"),
+        ],
+    }
+  })
+);
 
 // // Update instructions.
 // kinobi.update(
