@@ -194,3 +194,15 @@ export const syncNft = async (
         console.log(e);
     }
 }
+
+export const initAdmin = async (umi: Umi, identifier: number) => {
+    try {
+        const txBuilder = initializeAdmin(umi, identifier);
+
+        const res = await txBuilder.sendAndConfirm(umi);
+
+        console.log("Admin account initialized. Transaction hash : ", bs58.encode(res.signature));
+    } catch (e) {
+        console.log("Error initializing admin account:", e);
+    }
+}

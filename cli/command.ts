@@ -2,7 +2,7 @@ import { program } from 'commander';
 import {
     PublicKey
 } from '@solana/web3.js';
-import { initProject, linkNft, unlinkNft, syncNft, initializeMainPool, setClusterConfig, createUmiWithConfigs } from './scripts';
+import { initProject, linkNft, unlinkNft, syncNft, initializeMainPool, setClusterConfig, createUmiWithConfigs, initAdmin } from './scripts';
 
 program.version('0.0.1');
 
@@ -87,6 +87,22 @@ programCommand('sync')
         await setClusterConfig(env, keypair, rpc);
 
         await syncNft(new PublicKey(amint), new PublicKey(mint), new PublicKey(oaddress));
+    });
+
+programCommand('init-admin')
+    .option('-i, --identifier <number>')
+    .action(async (directory, cmd) => {
+        const { env, keypair, rpc, identifier } = cmd.opts();
+
+        console.log('Solana Cluster:', env);
+        console.log('Keypair Path: ', keypair);
+        console.log('RPC URL: ', rpc);
+
+        const umi = createUmiWithConfigs(rpc, keypair);
+
+        await setClusterConfig(env, keypair, rpc);
+
+        await initAdmin(umi, identifier);
     });
 
 
